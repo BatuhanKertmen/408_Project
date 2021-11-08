@@ -59,6 +59,7 @@ namespace Server
             this.button_listen.TabIndex = 3;
             this.button_listen.Text = "Listen";
             this.button_listen.UseVisualStyleBackColor = true;
+            this.button_listen.Click += new System.EventHandler(this.button_listen_Click);
             // 
             // text_msg_box
             // 
