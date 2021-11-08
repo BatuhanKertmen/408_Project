@@ -1,0 +1,10 @@
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\obj\Debug\Server.csprojAssemblyReference.cache
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\obj\Debug\Server.Properties.Resources.resources
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\obj\Debug\Server.csproj.GenerateResource.cache
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\bin\Debug\Server.exe.config
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\bin\Debug\Server.exe
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\bin\Debug\Server.pdb
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\obj\Debug\Server.exe
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\obj\Debug\Server.pdb
+C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\Server\obj\Debug\Server.Form1.resources
