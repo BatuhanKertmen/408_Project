@@ -13,12 +13,12 @@ using System.Windows.Forms;
 
 namespace Server
 {
-    struct Sweet{
+    public struct Sweet{
         string sender;
         string content;
         DateTime date;
 
-        Sweet(string sender_info, string content_info)
+        public Sweet(string sender_info, string content_info)
         {
             sender = sender_info;
             content = content_info;
@@ -55,7 +55,7 @@ namespace Server
                 }
                 catch 
                 {
-                    text_msg_box.AppendText("Error occured while connecting to the Port!");
+                    text_msg_box.AppendText("Error occured while connecting to the Port!\n");
                 }
 
                 listening = true;
@@ -67,8 +67,8 @@ namespace Server
             }
             else
             {
-                text_msg_box.AppendText("Could not start listening port " + text_port.Text + "!");
-                text_msg_box.AppendText("Please check port!");
+                text_msg_box.AppendText("Could not start listening port " + text_port.Text + "!\n");
+                text_msg_box.AppendText("Please check port!\n");
             }
 
         }
@@ -77,10 +77,69 @@ namespace Server
         {
             while (listening)
             {
+                try
+                {
+                    Socket client_socket = server_socket.Accept();
+                    client_sockets.Add(client_socket);
+                    text_msg_box.AppendText("A client connected!\n");
 
+                    Thread recieve_msg_thread = new Thread(() => RecieveMsg(ref client_socket));
+                }
+                catch
+                {
+                    if (terminating)
+                    {
+                        listening = false;
+                    }
+                    else
+                    {
+                        text_msg_box.AppendText("An error occured while accepting clients!\n");
+                    }
+                }
+            }
+        }
+        private void RecieveMsg(ref Socket current_client)
+        {
+            bool connected = true;
+            while (connected && !terminating)
+            {
+                try
+                { 
+                    string incoming_sweet = GetMsgFromClient(ref current_client);
+                    Sweet new_sweet = ParseSweetString(incoming_sweet);
+
+                    RecordSweet(new_sweet);
+                    text_msg_box.AppendText("Message recieved.\n");
+
+                }
+                catch 
+                {
+                    if (!terminating)
+                    {
+                        text_msg_box.AppendText("A client has disconnected!\n");
+                    }
+                    
+                }
             }
         }
 
+        private string GetMsgFromClient(ref Socket client_socket)
+        {
+            Byte[] buffer = new byte[256];
+            client_socket.Receive(buffer);
+            return Encoding.Default.GetString(buffer);
+        }
+        private Sweet ParseSweetString(string sweet_string)
+        {
+            /*
+             *
+             * TO DO: parse sweet string to sender and content
+             *
+             */
+            string sweet_sender = "dummy sender";
+            string sweet_content = "dummy content";
+            return new Sweet(sweet_sender, sweet_content);
+        }
         private void RecordSweet(Sweet sweet)
         {
             sweets.Add(sweet);
