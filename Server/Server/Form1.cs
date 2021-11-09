@@ -17,7 +17,6 @@ namespace Server
         string sender;
         string content;
         DateTime date;
-
         public Sweet(string sender_info, string content_info)
         {
             sender = sender_info;
@@ -52,6 +51,8 @@ namespace Server
                     IPEndPoint end_point = new IPEndPoint(IPAddress.Any, server_port);
                     server_socket.Bind(end_point);
                     server_socket.Listen(3);
+
+                    text_msg_box.AppendText("Server is listening for connections.\n");
                 }
                 catch 
                 {
@@ -83,7 +84,7 @@ namespace Server
                     client_sockets.Add(client_socket);
                     text_msg_box.AppendText("A client connected!\n");
 
-                    Thread recieve_msg_thread = new Thread(() => RecieveMsg(ref client_socket));
+                    Thread recieve_msg_thread = new Thread(() => RecieveMsg(client_socket));
                 }
                 catch
                 {
@@ -98,19 +99,18 @@ namespace Server
                 }
             }
         }
-        private void RecieveMsg(ref Socket current_client)
+        private void RecieveMsg(Socket current_client)
         {
             bool connected = true;
             while (connected && !terminating)
             {
                 try
                 { 
-                    string incoming_sweet = GetMsgFromClient(ref current_client);
+                    string incoming_sweet = GetMsgFromClient(current_client);
                     Sweet new_sweet = ParseSweetString(incoming_sweet);
 
                     RecordSweet(new_sweet);
                     text_msg_box.AppendText("Message recieved.\n");
-
                 }
                 catch 
                 {
@@ -118,12 +118,11 @@ namespace Server
                     {
                         text_msg_box.AppendText("A client has disconnected!\n");
                     }
-                    
                 }
             }
         }
 
-        private string GetMsgFromClient(ref Socket client_socket)
+        private string GetMsgFromClient(Socket client_socket)
         {
             Byte[] buffer = new byte[256];
             client_socket.Receive(buffer);
