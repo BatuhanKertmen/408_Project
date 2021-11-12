@@ -98,7 +98,7 @@ namespace client
             {
                 try
                 {
-                    Byte[] buffer = new Byte[64];
+                    Byte[] buffer = new Byte[256];
                     clientSocket.Receive(buffer);
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
@@ -114,6 +114,7 @@ namespace client
                         button_connect.Enabled = true;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
+                        textBox_username.Enabled = true;
                     }
 
                     clientSocket.Close();

@@ -84,7 +84,7 @@ namespace Server
                     Socket client_socket = server_socket.Accept();
                     Byte[] buffer = new Byte[256];
                     client_socket.Receive(buffer);
-                    string incomingUsername = Encoding.Default.GetString(buffer);
+                    string incomingUsername = Encoding.Default.GetString(buffer).Trim('\0');
 
                     string[] usernames = System.IO.File.ReadAllLines(@"C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\user-db.txt");
                     bool user_name_check = CheckUserName(incomingUsername, usernames);
@@ -99,7 +99,8 @@ namespace Server
                         client_socket.Send(buffer2);
                         connected_list.Add(incomingUsername);
 
-                        Thread recieve_msg_thread = new Thread(() => RecieveMsg(client_socket));
+                        Thread recieve_msg_thread = new Thread(() => ReceiveMsg(client_socket, incomingUsername));
+                        recieve_msg_thread.Start();
                     }
                     else
                     {
@@ -124,40 +125,63 @@ namespace Server
 
         private bool CheckUserName(string given_username, string[] usernames)
         {
-            if (connected_list.Any(given_username.Contains))
+            bool isConnected = false;
+            foreach (string username in connected_list)
             {
-                text_msg_box.AppendText(given_username + " has already connected to server!\n");
-                return false;
+                if (username == given_username)
+                {
+                    text_msg_box.AppendText(given_username + " has already connected to the server!\n");
+                    isConnected = true;
+                    break;
+                }
             }
-            if (!usernames.Any(given_username.Contains))
+            if (isConnected) return false;
+
+            bool isIn = false;
+            foreach (string username in usernames)
             {
-                text_msg_box.AppendText("Could not found " + given_username + " in the user database!\n");
+                if (username == given_username)
+                {
+                    isIn = true;
+                    break;
+                }
+            }
+            if (!isIn) 
+            {
+                text_msg_box.AppendText(given_username + " does not exist in the database!\n");
                 return false;
             } 
             return true;
         }
-        private void RecieveMsg(Socket current_client)
-        {
+        private void ReceiveMsg(Socket current_client, string user_name)
+         {
             bool connected = true;
-            while (connected && !terminating)
-            {
+             while (connected && !terminating)
+             {
                 try
-                { 
+                 {
                     string incoming_sweet = GetMsgFromClient(current_client);
+                    incoming_sweet = incoming_sweet.Substring(0, incoming_sweet.IndexOf("\0"));
                     Sweet new_sweet = ParseSweetString(incoming_sweet);
 
                     RecordSweet(new_sweet);
                     text_msg_box.AppendText("Message recieved.\n");
-                }
-                catch 
-                {
-                    if (!terminating)
-                    {
-                        text_msg_box.AppendText("A client has disconnected!\n");
-                    }
-                }
-            }
-        }
+
+                 }
+                 catch 
+                 {
+                     if (!terminating)
+                     {
+                         text_msg_box.AppendText(user_name + " has disconnected!\n");
+                     }
+                     current_client.Close();
+                     client_sockets.Remove(current_client);
+                     connected_list.Remove(user_name);
+                     connected = false;
+                 }
+             }
+         }
+       
 
         private string GetMsgFromClient(Socket client_socket)
         {
