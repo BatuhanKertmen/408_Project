@@ -29,6 +29,7 @@ namespace Server
     {
         Socket server_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> client_sockets = new List<Socket>();
+        List<string> connected_list = new List<string>();
         List<Sweet> sweets = new List<Sweet>();
 
         bool terminating = false;
@@ -81,10 +82,31 @@ namespace Server
                 try
                 {
                     Socket client_socket = server_socket.Accept();
-                    client_sockets.Add(client_socket);
-                    text_msg_box.AppendText("A client connected!\n");
+                    Byte[] buffer = new Byte[256];
+                    client_socket.Receive(buffer);
+                    string incomingUsername = Encoding.Default.GetString(buffer);
 
-                    Thread recieve_msg_thread = new Thread(() => RecieveMsg(client_socket));
+                    string[] usernames = System.IO.File.ReadAllLines(@"C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\user-db.txt");
+                    bool user_name_check = CheckUserName(incomingUsername, usernames);
+
+                    if (user_name_check)
+                    {
+                        client_sockets.Add(client_socket);
+                        text_msg_box.AppendText(incomingUsername + " connected!\n");
+
+                        Byte[] buffer2 = new byte[64]; 
+                        buffer2 = Encoding.Default.GetBytes("yes");
+                        client_socket.Send(buffer2);
+                        connected_list.Add(incomingUsername);
+
+                        Thread recieve_msg_thread = new Thread(() => RecieveMsg(client_socket));
+                    }
+                    else
+                    {
+                        Byte[] buffer2 = new byte[64];
+                        buffer2 = Encoding.Default.GetBytes("no");
+                        client_socket.Send(buffer2);
+                    }
                 }
                 catch
                 {
@@ -98,6 +120,21 @@ namespace Server
                     }
                 }
             }
+        }
+
+        private bool CheckUserName(string given_username, string[] usernames)
+        {
+            if (connected_list.Any(given_username.Contains))
+            {
+                text_msg_box.AppendText(given_username + " has already connected to server!\n");
+                return false;
+            }
+            if (!usernames.Any(given_username.Contains))
+            {
+                text_msg_box.AppendText("Could not found " + given_username + " in the user database!\n");
+                return false;
+            } 
+            return true;
         }
         private void RecieveMsg(Socket current_client)
         {
