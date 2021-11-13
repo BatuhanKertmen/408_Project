@@ -9,19 +9,21 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows.Forms; 
 
 namespace Server
 {
     public struct Sweet{
-        string sender;
-        string content;
-        DateTime date;
+        public string id;
+        public string sender;
+        public string content;
+        public DateTime date;
         public Sweet(string sender_info, string content_info)
         {
             sender = sender_info;
             content = content_info;
             date = DateTime.Now;
+            id = Guid.NewGuid().ToString("N");
         }
     }
 
@@ -31,6 +33,7 @@ namespace Server
         List<Socket> client_sockets = new List<Socket>();
         List<string> connected_list = new List<string>();
         List<Sweet> sweets = new List<Sweet>();
+        int packet_size = 512;
 
         bool terminating = false;
         bool listening = false;
@@ -82,11 +85,11 @@ namespace Server
                 try
                 {
                     Socket client_socket = server_socket.Accept();
-                    Byte[] buffer = new Byte[256];
+                    Byte[] buffer = new Byte[packet_size];
                     client_socket.Receive(buffer);
                     string incomingUsername = Encoding.Default.GetString(buffer).Trim('\0');
 
-                    string[] usernames = System.IO.File.ReadAllLines(@"C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\user-db.txt");
+                    string[] usernames = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
                     bool user_name_check = CheckUserName(incomingUsername, usernames);
 
                     if (user_name_check)
@@ -94,7 +97,7 @@ namespace Server
                         client_sockets.Add(client_socket);
                         text_msg_box.AppendText(incomingUsername + " connected!\n");
 
-                        Byte[] buffer2 = new byte[64]; 
+                        Byte[] buffer2 = new byte[packet_size]; 
                         buffer2 = Encoding.Default.GetBytes("yes");
                         client_socket.Send(buffer2);
                         connected_list.Add(incomingUsername);
@@ -104,7 +107,7 @@ namespace Server
                     }
                     else
                     {
-                        Byte[] buffer2 = new byte[64];
+                        Byte[] buffer2 = new byte[packet_size];
                         buffer2 = Encoding.Default.GetBytes("no");
                         client_socket.Send(buffer2);
                     }
@@ -159,13 +162,35 @@ namespace Server
              while (connected && !terminating)
              {
                 try
-                 {
-                    string incoming_sweet = GetMsgFromClient(current_client);
-                    incoming_sweet = incoming_sweet.Substring(0, incoming_sweet.IndexOf("\0"));
-                    Sweet new_sweet = ParseSweetString(incoming_sweet);
+                {
+                    string incoming_request = GetMsgFromClient(current_client);
+                    string[] requestParams = incoming_request.Split(new string[] {"***"}, StringSplitOptions.RemoveEmptyEntries);
+                    
+                    if(requestParams[0] == "loadfeeds")
+                    {
+                        List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
+                        foreach (Sweet swt in feed_list)
+                        {
+                            if(swt.sender != user_name)
+                            {
+                                string message = "+--- " + swt.sender + " ---+ [" + swt.date + "] ID:" + swt.id + "\n" + swt.content;
 
-                    RecordSweet(new_sweet);
-                    text_msg_box.AppendText("Message recieved.\n");
+                                if (message.Length <= packet_size)
+                                {
+                                    Byte[] buffer = new byte[packet_size];
+                                    buffer = Encoding.Default.GetBytes(message);
+                                    current_client.Send(buffer);
+                                    text_msg_box.AppendText("Message feed send to " + user_name + ".\n");
+                                }
+                            }
+                            
+                        }
+                    }
+                    else if (requestParams[0] == "sendmessage")
+                    {
+                        RecordSweet(user_name, requestParams[1]);
+                        text_msg_box.AppendText("Message recieved from " + user_name + ".\n");
+                    }
 
                  }
                  catch 
@@ -185,24 +210,15 @@ namespace Server
 
         private string GetMsgFromClient(Socket client_socket)
         {
-            Byte[] buffer = new byte[256];
+            Byte[] buffer = new byte[packet_size];
             client_socket.Receive(buffer);
-            return Encoding.Default.GetString(buffer);
+            return Encoding.Default.GetString(buffer).Trim('\0');
         }
-        private Sweet ParseSweetString(string sweet_string)
+
+        private void RecordSweet(string user_name, string sweet_content)
         {
-            /*
-             *
-             * TO DO: parse sweet string to sender and content
-             *
-             */
-            string sweet_sender = "dummy sender";
-            string sweet_content = "dummy content";
-            return new Sweet(sweet_sender, sweet_content);
-        }
-        private void RecordSweet(Sweet sweet)
-        {
-            sweets.Add(sweet);
+            Sweet newSweet = new Sweet(user_name, sweet_content);
+            sweets.Add(newSweet);
         }
 
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)

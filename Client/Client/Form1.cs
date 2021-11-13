@@ -18,6 +18,7 @@ namespace client
         bool terminating = false;
         bool connected = false;
         Socket clientSocket;
+        int packet_size = 512;
 
         public Form1()
         {
@@ -41,16 +42,17 @@ namespace client
                     textBox_message.Enabled = true;
                     textBox_username.Enabled = false;
                     button_send.Enabled = true;
+                    button_loadfeeds.Enabled = true;
                     connected = true;
                     logs.AppendText("Connecting to the server!\n");
 
-                    Byte[] buffer = new Byte[64];
+                    Byte[] buffer = new Byte[packet_size];
 
                     string username = textBox_username.Text;
                     buffer = Encoding.Default.GetBytes(username);
                     clientSocket.Send(buffer);
 
-                    Byte[] buffer2 = new Byte[64];
+                    Byte[] buffer2 = new Byte[packet_size];
                     clientSocket.Receive(buffer2);
 
                     string incomingMessage = Encoding.Default.GetString(buffer2).Trim('\0');
@@ -61,6 +63,7 @@ namespace client
                         button_connect.Enabled = false;
                         textBox_message.Enabled = true;
                         button_send.Enabled = true;
+                        button_loadfeeds.Enabled = true;
 
                         connected = true;
 
@@ -73,6 +76,7 @@ namespace client
                         textBox_message.Enabled = false;
                         textBox_username.Enabled = true;
                         button_send.Enabled = false;
+                        button_loadfeeds.Enabled = false;
                         connected = false;
 
                         logs.AppendText("Username Check Failed!\n");
@@ -98,13 +102,13 @@ namespace client
             {
                 try
                 {
-                    Byte[] buffer = new Byte[256];
+                    Byte[] buffer = new Byte[packet_size];
                     clientSocket.Receive(buffer);
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                    logs.AppendText("Server: " + incomingMessage + "\n");
+                    logs.AppendText("\n" + incomingMessage + "\n");
                 }
                 catch
                 {
@@ -114,6 +118,7 @@ namespace client
                         button_connect.Enabled = true;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
+                        button_loadfeeds.Enabled = false;
                         textBox_username.Enabled = true;
                     }
 
@@ -133,19 +138,29 @@ namespace client
 
         private void button_send_Click(object sender, EventArgs e)
         {
-            string message = textBox_message.Text;
+            string message = "sendmessage***" + textBox_message.Text;
 
-            if(message != "" && message.Length <= 64)
+            if (message != "" && message.Length <= packet_size)
             {
-                Byte[] buffer = Encoding.Default.GetBytes(message);
+                Byte[] buffer = new byte[packet_size];
+                buffer = Encoding.Default.GetBytes(message);
                 clientSocket.Send(buffer);
             }
+        }
 
+        private void button_loadfeeds_Click(object sender, EventArgs e)
+        {
+            string message = "loadfeeds***";
+
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
         }
 
         private void textBox_port_TextChanged(object sender, EventArgs e)
         {
 
         }
+
+
     }
 }

@@ -26,3 +26,13 @@ C:\Users\Lenovo\Desktop\408_Project\408_Project\Client\client\obj\Debug\client.p
 C:\Users\Lenovo\Desktop\408_Project\408_Project\Client\client\bin\Debug\client.exe.config
 C:\Users\Lenovo\Desktop\408_Project\408_Project\Client\client\bin\Debug\client.exe
 C:\Users\Lenovo\Desktop\408_Project\408_Project\Client\client\bin\Debug\client.pdb
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\bin\Debug\client.exe.config
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\bin\Debug\client.exe
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\bin\Debug\client.pdb
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\obj\Debug\client.csproj.AssemblyReference.cache
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\obj\Debug\client.Form1.resources
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\obj\Debug\client.Properties.Resources.resources
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\obj\Debug\client.csproj.GenerateResource.cache
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\obj\Debug\client.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\obj\Debug\client.exe
+C:\Users\Admin\Desktop\CS408_Proj\408_Project\Client\client\obj\Debug\client.pdb
