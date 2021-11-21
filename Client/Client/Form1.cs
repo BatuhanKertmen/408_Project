@@ -39,6 +39,7 @@ namespace client
                 {
                     clientSocket.Connect(IP, portNum);
                     button_connect.Enabled = false;
+                    button_disconnect.Enabled = true;
                     textBox_message.Enabled = true;
                     textBox_username.Enabled = false;
                     button_send.Enabled = true;
@@ -61,6 +62,7 @@ namespace client
                     {
                         logs.AppendText("Connected to the server!\n");
                         button_connect.Enabled = false;
+                        button_disconnect.Enabled = true;
                         textBox_message.Enabled = true;
                         button_send.Enabled = true;
                         button_loadfeeds.Enabled = true;
@@ -73,6 +75,7 @@ namespace client
                     if (incomingMessage == "no")
                     {
                         button_connect.Enabled = true;
+                        button_disconnect.Enabled = false;
                         textBox_message.Enabled = false;
                         textBox_username.Enabled = true;
                         button_send.Enabled = false;
@@ -111,6 +114,7 @@ namespace client
                     if (incomingMessage == "") {
                         logs.AppendText("The server has disconnected\n");
                         button_connect.Enabled = true;
+                        button_disconnect.Enabled = false;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                         button_loadfeeds.Enabled = false;
@@ -128,6 +132,7 @@ namespace client
                     {
                         logs.AppendText("The server has disconnected\n");
                         button_connect.Enabled = true;
+                        button_disconnect.Enabled = false;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                         button_loadfeeds.Enabled = false;
@@ -173,6 +178,11 @@ namespace client
 
         }
 
-
+        private void button_disconnect_Click(object sender, EventArgs e)
+        {
+            connected = false;
+            terminating = true;
+            Environment.Exit(0);
+        }
     }
 }

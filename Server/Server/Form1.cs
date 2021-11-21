@@ -66,6 +66,7 @@ namespace Server
                 listening = true;
                 text_port.Enabled = false;
                 button_listen.Enabled = false;
+                button_disconnect.Enabled = true;
 
                 Thread accept_client_thread = new Thread(AcceptClients);
                 accept_client_thread.Start();
@@ -222,6 +223,13 @@ namespace Server
         }
 
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            listening = false;
+            terminating = true;
+            Environment.Exit(0);
+        }
+
+        private void button_disconnect_Click(object sender, EventArgs e)
         {
             listening = false;
             terminating = true;

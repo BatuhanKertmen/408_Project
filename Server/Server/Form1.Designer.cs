@@ -33,6 +33,7 @@ namespace Server
             this.label1 = new System.Windows.Forms.Label();
             this.button_listen = new System.Windows.Forms.Button();
             this.text_msg_box = new System.Windows.Forms.RichTextBox();
+            this.button_disconnect = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // text_port
@@ -69,11 +70,23 @@ namespace Server
             this.text_msg_box.TabIndex = 4;
             this.text_msg_box.Text = "";
             // 
+            // button_disconnect
+            // 
+            this.button_disconnect.Enabled = false;
+            this.button_disconnect.Location = new System.Drawing.Point(362, 56);
+            this.button_disconnect.Name = "button_disconnect";
+            this.button_disconnect.Size = new System.Drawing.Size(112, 33);
+            this.button_disconnect.TabIndex = 5;
+            this.button_disconnect.Text = "Disconnect";
+            this.button_disconnect.UseVisualStyleBackColor = true;
+            this.button_disconnect.Click += new System.EventHandler(this.button_disconnect_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button_disconnect);
             this.Controls.Add(this.text_msg_box);
             this.Controls.Add(this.button_listen);
             this.Controls.Add(this.label1);
@@ -90,6 +103,7 @@ namespace Server
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button_listen;
         private System.Windows.Forms.RichTextBox text_msg_box;
+        private System.Windows.Forms.Button button_disconnect;
     }
 }
 
