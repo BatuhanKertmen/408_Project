@@ -108,7 +108,19 @@ namespace client
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                    logs.AppendText("\n" + incomingMessage + "\n");
+                    if (incomingMessage == "") {
+                        logs.AppendText("The server has disconnected\n");
+                        button_connect.Enabled = true;
+                        textBox_message.Enabled = false;
+                        button_send.Enabled = false;
+                        button_loadfeeds.Enabled = false;
+                        textBox_username.Enabled = true;
+                        clientSocket.Close();
+                        connected = false;
+                    }
+
+                    else
+                        logs.AppendText("\n" + incomingMessage + "\n");
                 }
                 catch
                 {

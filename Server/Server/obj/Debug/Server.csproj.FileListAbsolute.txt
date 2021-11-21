@@ -18,3 +18,12 @@ C:\Users\Admin\Desktop\CS408_Proj\408_Project\Server\Server\obj\Debug\Server.csp
 C:\Users\Admin\Desktop\CS408_Proj\408_Project\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
 C:\Users\Admin\Desktop\CS408_Proj\408_Project\Server\Server\obj\Debug\Server.exe
 C:\Users\Admin\Desktop\CS408_Proj\408_Project\Server\Server\obj\Debug\Server.pdb
+D:\desktop\cs408\408_Project\Server\Server\bin\Debug\Server.exe.config
+D:\desktop\cs408\408_Project\Server\Server\obj\Debug\Server.exe
+D:\desktop\cs408\408_Project\Server\Server\obj\Debug\Server.pdb
+D:\desktop\cs408\408_Project\Server\Server\bin\Debug\Server.exe
+D:\desktop\cs408\408_Project\Server\Server\bin\Debug\Server.pdb
+D:\desktop\cs408\408_Project\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+D:\desktop\cs408\408_Project\Server\Server\obj\Debug\Server.Form1.resources
+D:\desktop\cs408\408_Project\Server\Server\obj\Debug\Server.Properties.Resources.resources
+D:\desktop\cs408\408_Project\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
