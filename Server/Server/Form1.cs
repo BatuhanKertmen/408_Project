@@ -196,7 +196,9 @@ namespace Server
                     if(requestParams[0] == "loadfeeds")
                     {
                         List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
-                        foreach (string line in System.IO.File.ReadLines(@"C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\sweet.txt"))
+
+                        string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                        foreach (string line in File.ReadLines(path))
                         {
                             Sweet swt = Sweet.stringToSweet(line);
                             if(swt.sender != user_name)
@@ -255,7 +257,8 @@ namespace Server
 
             try
             {
-                File.AppendAllText(@"C:\Users\Lenovo\Desktop\408_Project\408_Project\Server\sweet.txt", message + "\n");
+                string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                File.AppendAllText(path, message + "\n");
             }
             catch (Exception e)
             {
