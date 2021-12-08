@@ -56,6 +56,7 @@ namespace client
                         textBox_username.Enabled = false;
                         button_send.Enabled = true;
                         button_loadfeeds.Enabled = true;
+                        button_listusers.Enabled = true;
                         connected = true;
                         logs.AppendText("Connecting to the server!\n");
 
@@ -75,6 +76,7 @@ namespace client
                             textBox_message.Enabled = true;
                             button_send.Enabled = true;
                             button_loadfeeds.Enabled = true;
+                            button_listusers.Enabled = true;
 
                             connected = true;
 
@@ -89,6 +91,7 @@ namespace client
                             textBox_username.Enabled = true;
                             button_send.Enabled = false;
                             button_loadfeeds.Enabled = false;
+                            button_listusers.Enabled = false;
                             connected = false;
 
                             logs.AppendText("Username Check Failed!\n");
@@ -129,6 +132,7 @@ namespace client
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                         button_loadfeeds.Enabled = false;
+                        button_listusers.Enabled = false;
                         textBox_username.Enabled = true;
                         clientSocket.Close();
                         connected = false;
@@ -147,6 +151,7 @@ namespace client
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                         button_loadfeeds.Enabled = false;
+                        button_listusers.Enabled = false;
                         textBox_username.Enabled = true;
                     }
 
@@ -186,6 +191,14 @@ namespace client
             clientSocket.Send(buffer);
         }
 
+        private void button_listusers_Click(object sender, EventArgs e)
+        {
+            string message = "listusers***";
+            logs.AppendText("\nUser List: \n");
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+        }
+
         private void textBox_port_TextChanged(object sender, EventArgs e)
         {
 
@@ -202,6 +215,7 @@ namespace client
             textBox_port.Enabled = true;
             textBox_username.Enabled = true;
             button_loadfeeds.Enabled = false;
+            button_listusers.Enabled = false;
 
             terminating = true;
             clientSocket.Close();
