@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -18,6 +19,14 @@ namespace Server
         public string sender;
         public string content;
         public DateTime date;
+
+        public Sweet(string sender_info, string content_info, string given_date, string given_id)
+        {
+            sender = sender_info;
+            content = content_info;
+            date = Convert.ToDateTime(given_date);
+            id = given_id;
+        }
         public Sweet(string sender_info, string content_info)
         {
             sender = sender_info;
@@ -25,15 +34,27 @@ namespace Server
             date = DateTime.Now;
             id = Guid.NewGuid().ToString("N");
         }
+
+        public static Sweet stringToSweet(string msg)
+        {
+            string[] sweetList =  msg.Split('\t');
+            string sender = sweetList[0];
+            string date = sweetList[1];
+            string id = sweetList[2];
+            string content = sweetList[3];
+
+            return new Sweet(sender, content, date, id);
+        }
     }
 
     public partial class Form1 : Form
     {
-        Socket server_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        Socket server_socket;
         List<Socket> client_sockets = new List<Socket>();
         List<string> connected_list = new List<string>();
         List<Sweet> sweets = new List<Sweet>();
         int packet_size = 512;
+        bool binded = false;
 
         bool terminating = false;
         bool listening = false;
@@ -47,13 +68,19 @@ namespace Server
 
         private void button_listen_Click(object sender, EventArgs e)
         {
+            server_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
             int server_port;
             if(Int32.TryParse(text_port.Text, out server_port))
             {
                 try
                 {
                     IPEndPoint end_point = new IPEndPoint(IPAddress.Any, server_port);
-                    server_socket.Bind(end_point);
+                    if (!binded)
+                    {
+                        server_socket.Bind(end_point);
+                        binded = true;
+                    }
                     server_socket.Listen(3);
 
                     text_msg_box.AppendText("Server is listening for connections.\n");
@@ -169,22 +196,28 @@ namespace Server
                     if(requestParams[0] == "loadfeeds")
                     {
                         List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
-                        foreach (Sweet swt in feed_list)
+
+                        string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                        foreach (string line in File.ReadLines(path))
                         {
+                            Sweet swt = Sweet.stringToSweet(line);
                             if(swt.sender != user_name)
                             {
-                                string message = "+--- " + swt.sender + " ---+ [" + swt.date + "] ID:" + swt.id + "\n" + swt.content;
+                                string message = "\n+--- " + swt.sender + " ---+ [" + swt.date + "] ID:" + swt.id + "\n" + swt.content + "\n";
+
 
                                 if (message.Length <= packet_size)
                                 {
                                     Byte[] buffer = new byte[packet_size];
                                     buffer = Encoding.Default.GetBytes(message);
                                     current_client.Send(buffer);
-                                    text_msg_box.AppendText("Message feed send to " + user_name + ".\n");
                                 }
                             }
                             
                         }
+
+                        text_msg_box.AppendText("Message feed send to " + user_name + ".\n");
+
                     }
                     else if (requestParams[0] == "sendmessage")
                     {
@@ -219,13 +252,30 @@ namespace Server
         {
             Sweet newSweet = new Sweet(user_name, sweet_content);
             sweets.Add(newSweet);
-        }
 
-        private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
+            string message = newSweet.sender + "\t" + newSweet.date + "\t" + newSweet.id + "\t" + newSweet.content;
+
+            try
+            {
+                string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                File.AppendAllText(path, message + "\n");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
+        }
+            private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             listening = false;
             terminating = true;
             Environment.Exit(0);
+        }
+
+
+        private void text_msg_box_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

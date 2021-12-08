@@ -37,52 +37,65 @@ namespace client
             {
                 try
                 {
-                    clientSocket.Connect(IP, portNum);
-                    button_connect.Enabled = false;
-                    textBox_message.Enabled = true;
-                    textBox_username.Enabled = false;
-                    button_send.Enabled = true;
-                    button_loadfeeds.Enabled = true;
-                    connected = true;
-                    logs.AppendText("Connecting to the server!\n");
+                    
+                    
 
                     Byte[] buffer = new Byte[packet_size];
 
                     string username = textBox_username.Text;
-                    buffer = Encoding.Default.GetBytes(username);
-                    clientSocket.Send(buffer);
-
-                    Byte[] buffer2 = new Byte[packet_size];
-                    clientSocket.Receive(buffer2);
-
-                    string incomingMessage = Encoding.Default.GetString(buffer2).Trim('\0');
-
-                    if (incomingMessage == "yes")
+                    if (username == "" || username == null)
                     {
-                        logs.AppendText("Connected to the server!\n");
+                        logs.AppendText("Please enter a username!\n");
+                    }
+                    else
+                    {
+                        clientSocket.Connect(IP, portNum);
                         button_connect.Enabled = false;
+                        button_disconnect.Enabled = true;
                         textBox_message.Enabled = true;
+                        textBox_username.Enabled = false;
                         button_send.Enabled = true;
                         button_loadfeeds.Enabled = true;
-
                         connected = true;
+                        logs.AppendText("Connecting to the server!\n");
 
-                        Thread receiveThread = new Thread(Receive);
-                        receiveThread.Start();
+                        buffer = Encoding.Default.GetBytes(username);
+                        clientSocket.Send(buffer);
+
+                        Byte[] buffer2 = new Byte[packet_size];
+                        clientSocket.Receive(buffer2);
+
+                        string incomingMessage = Encoding.Default.GetString(buffer2).Trim('\0');
+
+                        if (incomingMessage == "yes")
+                        {
+                            logs.AppendText("Connected to the server!\n");
+                            button_connect.Enabled = false;
+                            button_disconnect.Enabled = true;
+                            textBox_message.Enabled = true;
+                            button_send.Enabled = true;
+                            button_loadfeeds.Enabled = true;
+
+                            connected = true;
+
+                            Thread receiveThread = new Thread(Receive);
+                            receiveThread.Start();
+                        }
+                        if (incomingMessage == "no")
+                        {
+                            button_connect.Enabled = true;
+                            button_disconnect.Enabled = false;
+                            textBox_message.Enabled = false;
+                            textBox_username.Enabled = true;
+                            button_send.Enabled = false;
+                            button_loadfeeds.Enabled = false;
+                            connected = false;
+
+                            logs.AppendText("Username Check Failed!\n");
+
+                        }
                     }
-                    if (incomingMessage == "no")
-                    {
-                        button_connect.Enabled = true;
-                        textBox_message.Enabled = false;
-                        textBox_username.Enabled = true;
-                        button_send.Enabled = false;
-                        button_loadfeeds.Enabled = false;
-                        connected = false;
 
-                        logs.AppendText("Username Check Failed!\n");
-
-                    }
-                   
                 }
                 catch
                 {
@@ -101,14 +114,28 @@ namespace client
             while(connected)
             {
                 try
-                {
+                {                 
+
                     Byte[] buffer = new Byte[packet_size];
                     clientSocket.Receive(buffer);
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                    logs.AppendText("\n" + incomingMessage + "\n");
+                    if (incomingMessage == "") {
+                        logs.AppendText("The server has disconnected\n");
+                        button_connect.Enabled = true;
+                        button_disconnect.Enabled = false;
+                        textBox_message.Enabled = false;
+                        button_send.Enabled = false;
+                        button_loadfeeds.Enabled = false;
+                        textBox_username.Enabled = true;
+                        clientSocket.Close();
+                        connected = false;
+                    }
+
+                    else
+                        logs.AppendText(incomingMessage);
                 }
                 catch
                 {
@@ -116,6 +143,7 @@ namespace client
                     {
                         logs.AppendText("The server has disconnected\n");
                         button_connect.Enabled = true;
+                        button_disconnect.Enabled = false;
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                         button_loadfeeds.Enabled = false;
@@ -145,13 +173,15 @@ namespace client
                 Byte[] buffer = new byte[packet_size];
                 buffer = Encoding.Default.GetBytes(message);
                 clientSocket.Send(buffer);
+
+                logs.AppendText("\"" + textBox_message.Text + "\" was succesfully sent!\n");
             }
         }
 
         private void button_loadfeeds_Click(object sender, EventArgs e)
         {
             string message = "loadfeeds***";
-
+            logs.AppendText("\nLoaded Feeds: \n");
             Byte[] buffer = Encoding.Default.GetBytes(message);
             clientSocket.Send(buffer);
         }
@@ -161,6 +191,22 @@ namespace client
 
         }
 
+        private void button_disconnect_Click(object sender, EventArgs e)
+        {
+            connected = false;
+            button_connect.Enabled = true;
+            button_disconnect.Enabled = false;
+            textBox_message.Enabled = false;
+            button_send.Enabled = false;
+            textBox_ip.Enabled = true;
+            textBox_port.Enabled = true;
+            textBox_username.Enabled = true;
+            button_loadfeeds.Enabled = false;
 
+            terminating = true;
+            clientSocket.Close();
+
+            logs.AppendText("Disconnected from server!\n");
+        }
     }
 }

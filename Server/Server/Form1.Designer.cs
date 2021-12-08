@@ -68,6 +68,7 @@ namespace Server
             this.text_msg_box.Size = new System.Drawing.Size(657, 273);
             this.text_msg_box.TabIndex = 4;
             this.text_msg_box.Text = "";
+            this.text_msg_box.TextChanged += new System.EventHandler(this.text_msg_box_TextChanged);
             // 
             // Form1
             // 
