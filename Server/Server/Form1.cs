@@ -224,13 +224,38 @@ namespace Server
                         text_msg_box.AppendText("Message feed send to " + user_name + ".\n");
 
                     }
+                    else if (requestParams[0] == "listusers")
+                    {
+                        string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
+
+                        foreach (string user in user_list)
+                        {
+                            if (user != user_name)
+                            {
+                                Thread.Sleep(2);
+                                string message = "+--- " + user + " ---+\n";
+
+                                if (message.Length <= packet_size)
+                                {
+                                    Byte[] buffer = new byte[packet_size];
+                                    buffer = Encoding.Default.GetBytes(message);
+                                    current_client.Send(buffer);
+                                }
+                            }
+
+                        }
+
+                        text_msg_box.AppendText("User list send to " + user_name + ".\n");
+
+                    }
                     else if (requestParams[0] == "sendmessage")
                     {
                         RecordSweet(user_name, requestParams[1]);
                         text_msg_box.AppendText("Message recieved from " + user_name + ".\n");
                     }
+                    
 
-                 }
+                }
                  catch 
                  {
                      if (!terminating)
