@@ -196,8 +196,13 @@ namespace Server
                     if(requestParams[0] == "loadfeeds")
                     {
                         List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
-
+                        
                         string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                        if (!File.Exists(path))
+                        {
+
+                            using (StreamWriter sw = File.CreateText(path)) ;
+                        }
                         foreach (string line in File.ReadLines(path))
                         {
                             Sweet swt = Sweet.stringToSweet(line);
