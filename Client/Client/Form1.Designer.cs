@@ -42,8 +42,6 @@
             this.button_loadfeeds = new System.Windows.Forms.Button();
             this.button_disconnect = new System.Windows.Forms.Button();
             this.button_listusers = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.follower_text_box = new System.Windows.Forms.TextBox();
             this.follow_button = new System.Windows.Forms.Button();
@@ -190,24 +188,6 @@
             this.button_listusers.UseVisualStyleBackColor = true;
             this.button_listusers.Click += new System.EventHandler(this.button_listusers_Click);
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(0, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
-            this.label5.TabIndex = 14;
-            this.label5.Text = "label5";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(0, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "label6";
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -256,8 +236,6 @@
             this.Controls.Add(this.follow_button);
             this.Controls.Add(this.follower_text_box);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.button_listusers);
             this.Controls.Add(this.button_disconnect);
             this.Controls.Add(this.button_loadfeeds);
@@ -296,8 +274,6 @@
         private System.Windows.Forms.Button button_loadfeeds;
         private System.Windows.Forms.Button button_disconnect;
         private System.Windows.Forms.Button button_listusers;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox follower_text_box;
         private System.Windows.Forms.Button follow_button;
