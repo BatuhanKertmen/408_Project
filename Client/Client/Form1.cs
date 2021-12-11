@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace client
 {
-    public partial class Form1 : Form
+    public partial class Client : Form
     {
 
         bool terminating = false;
@@ -20,7 +20,7 @@ namespace client
         Socket clientSocket;
         int packet_size = 512;
 
-        public Form1()
+        public Client()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
@@ -221,6 +221,11 @@ namespace client
             clientSocket.Close();
 
             logs.AppendText("Disconnected from server!\n");
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
