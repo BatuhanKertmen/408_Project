@@ -42,7 +42,6 @@ D:\desktop\cs408\408_Project\Client\client\obj\Debug\client.pdb
 D:\desktop\cs408\408_Project\Client\client\bin\Debug\client.exe
 D:\desktop\cs408\408_Project\Client\client\bin\Debug\client.pdb
 D:\desktop\cs408\408_Project\Client\client\obj\Debug\client.csprojResolveAssemblyReference.cache
-D:\desktop\cs408\408_Project\Client\client\obj\Debug\client.Form1.resources
 D:\desktop\cs408\408_Project\Client\client\obj\Debug\client.Properties.Resources.resources
 D:\desktop\cs408\408_Project\Client\client\obj\Debug\client.csproj.GenerateResource.Cache
 C:\Users\pc\Source\Repos\BatuhanKertmen\408_Project\Client\client\bin\Debug\client.exe.config
@@ -55,3 +54,4 @@ C:\Users\pc\Source\Repos\BatuhanKertmen\408_Project\Client\client\obj\Debug\clie
 C:\Users\pc\Source\Repos\BatuhanKertmen\408_Project\Client\client\obj\Debug\client.csproj.CoreCompileInputs.cache
 C:\Users\pc\Source\Repos\BatuhanKertmen\408_Project\Client\client\obj\Debug\client.exe
 C:\Users\pc\Source\Repos\BatuhanKertmen\408_Project\Client\client\obj\Debug\client.pdb
+D:\desktop\cs408\408_Project\Client\client\obj\Debug\client.Form1.resources
