@@ -308,6 +308,10 @@ namespace Server
 
                     else if (requestParams[0] == "follow")
                     {
+                        string path = Directory.GetCurrentDirectory() + "\\follows.txt";
+                        if (!File.Exists(path))
+                            File.AppendAllText(path, "");
+
                         string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
 
                         if (user_list.Contains(requestParams[1]) && !is_already_follows(user_name, requestParams[1]))
@@ -330,6 +334,10 @@ namespace Server
 
                     else if (requestParams[0] == "unfollow")
                     {
+                        string path = Directory.GetCurrentDirectory() + "\\follows.txt";
+                        if (!File.Exists(path))
+                            File.AppendAllText(path, "");
+
                         string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
 
                         if (user_list.Contains(requestParams[1]) && is_already_follows(user_name, requestParams[1]))
