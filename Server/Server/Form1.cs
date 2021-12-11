@@ -47,12 +47,38 @@ namespace Server
         }
     }
 
+    public struct Follow
+    {
+        public string sender;
+        public string do_what;
+        public string target_user;
+
+        public Follow(string sender_info, string do_what_info, string target_user_info)
+        {
+            sender = sender_info;
+            do_what = do_what_info;
+            target_user = target_user_info;
+        }
+
+        public static Follow stringToFollow(string msg)
+        {
+            string[] followerList = msg.Split('\t');
+            string sender = followerList[0];
+            string do_what = followerList[1];
+            string target_user = followerList[2];
+
+            return new Follow(sender, do_what, target_user);
+        }
+
+    }
+
     public partial class Form1 : Form
     {
         Socket server_socket;
         List<Socket> client_sockets = new List<Socket>();
         List<string> connected_list = new List<string>();
         List<Sweet> sweets = new List<Sweet>();
+        List<Follow> follows = new List<Follow>();
         int packet_size = 512;
         bool binded = false;
 
@@ -183,6 +209,38 @@ namespace Server
             } 
             return true;
         }
+
+        private bool is_already_follows(string follower_name, string target_name)
+        {
+            string path = Directory.GetCurrentDirectory() + "\\follows.txt";
+            foreach (string line in File.ReadLines(path))
+            {
+                Follow fllw = Follow.stringToFollow(line);
+
+                if(fllw.sender == follower_name && fllw.target_user == target_name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void delete_follower(string follower_name, string target_name)
+        {
+            string path = Directory.GetCurrentDirectory() + "\\follows.txt";
+            string[] user_list = System.IO.File.ReadAllLines(path);
+            List<string> converted_user_list = new List<string>(user_list);
+            List<string> temp_list = converted_user_list;
+
+            string line_to_delete = follower_name + "\t" + "follow" + "\t" + target_name;
+            converted_user_list.Remove(line_to_delete);
+            text_msg_box.AppendText("Line deleted: " + line_to_delete + "\n");
+
+            string[] final_user_list = converted_user_list.ToArray();
+            File.WriteAllLines(path, final_user_list, Encoding.UTF8);
+
+        }
+
         private void ReceiveMsg(Socket current_client, string user_name)
          {
             bool connected = true;
@@ -200,8 +258,7 @@ namespace Server
                         string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
                         if (!File.Exists(path))
                         {
-
-                            using (StreamWriter sw = File.CreateText(path)) ;
+                            using (StreamWriter sw = File.CreateText(path));
                         }
                         foreach (string line in File.ReadLines(path))
                         {
@@ -248,6 +305,51 @@ namespace Server
                         text_msg_box.AppendText("User list send to " + user_name + ".\n");
 
                     }
+
+                    else if (requestParams[0] == "follow")
+                    {
+                        string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
+
+                        if (user_list.Contains(requestParams[1]) && !is_already_follows(user_name, requestParams[1]))
+                        {
+                            RecordFollower(user_name, requestParams[0], requestParams[1]);
+                            text_msg_box.AppendText(user_name + "is following " + requestParams[1] + ".\n");
+                        }
+
+                        else if(is_already_follows(user_name, requestParams[1]))
+                        {
+                            string msg_to_send = ("User " + user_name + " already following " + requestParams[1] + "!" + "\n");
+                            text_msg_box.AppendText(msg_to_send);
+                        }
+
+                        else
+                        {
+                            text_msg_box.AppendText("User " + requestParams[1] + " does not exists!" + "\n");
+                        }
+                    }
+
+                    else if (requestParams[0] == "unfollow")
+                    {
+                        string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
+
+                        if (user_list.Contains(requestParams[1]) && is_already_follows(user_name, requestParams[1]))
+                        {
+                            delete_follower(user_name, requestParams[1]);
+                            text_msg_box.AppendText(user_name + " unfollowed " + requestParams[1] + ".\n");
+                        }
+
+                        else if (!is_already_follows(user_name, requestParams[1]))
+                        {
+                            string msg_to_send = ("User " + user_name + " can't unfollow " + requestParams[1] + " because user already not following the other user!" + "\n");
+                            text_msg_box.AppendText(msg_to_send);
+                        }
+
+                        else
+                        {
+                            text_msg_box.AppendText("Something unexpected happened in the unfollowing action! \n");
+                        }
+                    }
+
                     else if (requestParams[0] == "sendmessage")
                     {
                         RecordSweet(user_name, requestParams[1]);
@@ -295,7 +397,26 @@ namespace Server
                 Console.WriteLine("Exception: " + e.Message);
             }
         }
-            private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
+
+        private void RecordFollower(string user_name, string do_what, string target_name)
+        {
+            Follow newFollow = new Follow(user_name, do_what, target_name);
+            follows.Add(newFollow);
+
+            string action = newFollow.sender + "\t" + newFollow.do_what + "\t" + newFollow.target_user;
+
+            try
+            {
+                string path = Directory.GetCurrentDirectory() + "\\follows.txt";
+                File.AppendAllText(path, action + "\n");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
+        }
+
+        private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             listening = false;
             terminating = true;

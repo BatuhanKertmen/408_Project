@@ -42,6 +42,12 @@
             this.button_loadfeeds = new System.Windows.Forms.Button();
             this.button_disconnect = new System.Windows.Forms.Button();
             this.button_listusers = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.follower_text_box = new System.Windows.Forms.TextBox();
+            this.follow_button = new System.Windows.Forms.Button();
+            this.unfollow_button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -67,7 +73,7 @@
             // textBox_ip
             // 
             this.textBox_ip.Location = new System.Drawing.Point(76, 50);
-            this.textBox_ip.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_ip.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_ip.Name = "textBox_ip";
             this.textBox_ip.Size = new System.Drawing.Size(131, 20);
             this.textBox_ip.TabIndex = 2;
@@ -75,7 +81,7 @@
             // textBox_port
             // 
             this.textBox_port.Location = new System.Drawing.Point(76, 79);
-            this.textBox_port.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_port.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_port.Name = "textBox_port";
             this.textBox_port.Size = new System.Drawing.Size(131, 20);
             this.textBox_port.TabIndex = 3;
@@ -84,7 +90,7 @@
             // button_connect
             // 
             this.button_connect.Location = new System.Drawing.Point(76, 140);
-            this.button_connect.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_connect.Margin = new System.Windows.Forms.Padding(2);
             this.button_connect.Name = "button_connect";
             this.button_connect.Size = new System.Drawing.Size(70, 23);
             this.button_connect.TabIndex = 4;
@@ -95,7 +101,7 @@
             // logs
             // 
             this.logs.Location = new System.Drawing.Point(287, 50);
-            this.logs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.logs.Margin = new System.Windows.Forms.Padding(2);
             this.logs.Name = "logs";
             this.logs.Size = new System.Drawing.Size(349, 251);
             this.logs.TabIndex = 5;
@@ -105,7 +111,7 @@
             // 
             this.textBox_message.Enabled = false;
             this.textBox_message.Location = new System.Drawing.Point(76, 245);
-            this.textBox_message.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_message.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_message.Name = "textBox_message";
             this.textBox_message.Size = new System.Drawing.Size(183, 20);
             this.textBox_message.TabIndex = 6;
@@ -124,7 +130,7 @@
             // 
             this.button_send.Enabled = false;
             this.button_send.Location = new System.Drawing.Point(76, 279);
-            this.button_send.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_send.Margin = new System.Windows.Forms.Padding(2);
             this.button_send.Name = "button_send";
             this.button_send.Size = new System.Drawing.Size(70, 22);
             this.button_send.TabIndex = 8;
@@ -145,7 +151,7 @@
             // textBox_username
             // 
             this.textBox_username.Location = new System.Drawing.Point(76, 107);
-            this.textBox_username.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_username.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_username.Name = "textBox_username";
             this.textBox_username.Size = new System.Drawing.Size(131, 20);
             this.textBox_username.TabIndex = 10;
@@ -165,7 +171,7 @@
             // 
             this.button_disconnect.Enabled = false;
             this.button_disconnect.Location = new System.Drawing.Point(151, 140);
-            this.button_disconnect.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_disconnect.Margin = new System.Windows.Forms.Padding(2);
             this.button_disconnect.Name = "button_disconnect";
             this.button_disconnect.Size = new System.Drawing.Size(70, 23);
             this.button_disconnect.TabIndex = 12;
@@ -184,11 +190,74 @@
             this.button_listusers.UseVisualStyleBackColor = true;
             this.button_listusers.Click += new System.EventHandler(this.button_listusers_Click);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(0, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "label5";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(0, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "label6";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(34, 178);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(38, 13);
+            this.label7.TabIndex = 16;
+            this.label7.Text = "Name:";
+            // 
+            // follower_text_box
+            // 
+            this.follower_text_box.Enabled = false;
+            this.follower_text_box.Location = new System.Drawing.Point(78, 178);
+            this.follower_text_box.Name = "follower_text_box";
+            this.follower_text_box.Size = new System.Drawing.Size(129, 20);
+            this.follower_text_box.TabIndex = 17;
+            // 
+            // follow_button
+            // 
+            this.follow_button.Enabled = false;
+            this.follow_button.Location = new System.Drawing.Point(76, 204);
+            this.follow_button.Name = "follow_button";
+            this.follow_button.Size = new System.Drawing.Size(70, 23);
+            this.follow_button.TabIndex = 18;
+            this.follow_button.Text = "Follow";
+            this.follow_button.UseVisualStyleBackColor = true;
+            this.follow_button.Click += new System.EventHandler(this.follow_button_Click);
+            // 
+            // unfollow_button
+            // 
+            this.unfollow_button.Enabled = false;
+            this.unfollow_button.Location = new System.Drawing.Point(152, 204);
+            this.unfollow_button.Name = "unfollow_button";
+            this.unfollow_button.Size = new System.Drawing.Size(69, 23);
+            this.unfollow_button.TabIndex = 19;
+            this.unfollow_button.Text = "Unfollow";
+            this.unfollow_button.UseVisualStyleBackColor = true;
+            this.unfollow_button.Click += new System.EventHandler(this.unfollow_button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(664, 379);
+            this.Controls.Add(this.unfollow_button);
+            this.Controls.Add(this.follow_button);
+            this.Controls.Add(this.follower_text_box);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.button_listusers);
             this.Controls.Add(this.button_disconnect);
             this.Controls.Add(this.button_loadfeeds);
@@ -203,7 +272,7 @@
             this.Controls.Add(this.textBox_ip);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -227,6 +296,12 @@
         private System.Windows.Forms.Button button_loadfeeds;
         private System.Windows.Forms.Button button_disconnect;
         private System.Windows.Forms.Button button_listusers;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox follower_text_box;
+        private System.Windows.Forms.Button follow_button;
+        private System.Windows.Forms.Button unfollow_button;
     }
 }
 

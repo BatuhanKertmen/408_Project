@@ -77,6 +77,9 @@ namespace client
                             button_send.Enabled = true;
                             button_loadfeeds.Enabled = true;
                             button_listusers.Enabled = true;
+                            follow_button.Enabled = true;
+                            unfollow_button.Enabled = true;
+                            follower_text_box.Enabled = true;
 
                             connected = true;
 
@@ -134,6 +137,9 @@ namespace client
                         button_loadfeeds.Enabled = false;
                         button_listusers.Enabled = false;
                         textBox_username.Enabled = true;
+                        follow_button.Enabled = false;
+                        unfollow_button.Enabled = false;
+                        follower_text_box.Enabled = false;
                         clientSocket.Close();
                         connected = false;
                     }
@@ -153,6 +159,9 @@ namespace client
                         button_loadfeeds.Enabled = false;
                         button_listusers.Enabled = false;
                         textBox_username.Enabled = true;
+                        follow_button.Enabled = false;
+                        unfollow_button.Enabled = false;
+                        follower_text_box.Enabled = false;
                     }
 
                     clientSocket.Close();
@@ -173,7 +182,7 @@ namespace client
         {
             string message = "sendmessage***" + textBox_message.Text;
 
-            if (message != "" && message.Length <= packet_size)
+            if (message != "sendmessage***" && message.Length <= packet_size)
             {
                 Byte[] buffer = new byte[packet_size];
                 buffer = Encoding.Default.GetBytes(message);
@@ -216,11 +225,58 @@ namespace client
             textBox_username.Enabled = true;
             button_loadfeeds.Enabled = false;
             button_listusers.Enabled = false;
+            follow_button.Enabled = false;
+            unfollow_button.Enabled = false;
+            follower_text_box.Enabled = false;
 
             terminating = true;
             clientSocket.Close();
 
             logs.AppendText("Disconnected from server!\n");
+        }
+
+        private void follow_button_Click(object sender, EventArgs e)
+        {
+            string message = "follow***" + follower_text_box.Text;
+
+            if (textBox_username.Text != follower_text_box.Text)
+            {
+                if (message != "follow***" && message.Length <= packet_size)
+                {
+                    Byte[] buffer = new byte[packet_size];
+                    buffer = Encoding.Default.GetBytes(message);
+                    clientSocket.Send(buffer);
+
+                    logs.AppendText("Follow action is succesfully send!\n" );
+                }
+            }
+
+            else
+            {
+                logs.AppendText("You can't follow yourself!\n");
+            }
+        }
+
+        private void unfollow_button_Click(object sender, EventArgs e)
+        {
+            string message = "unfollow***" + follower_text_box.Text;
+
+            if (textBox_username.Text != follower_text_box.Text)
+            {
+                if (message != "unfollow***" && message.Length <= packet_size)
+                {
+                    Byte[] buffer = new byte[packet_size];
+                    buffer = Encoding.Default.GetBytes(message);
+                    clientSocket.Send(buffer);
+
+                    logs.AppendText("Unfollow action is succesfully send!\n");
+                }
+            }
+
+            else
+            {
+                logs.AppendText("You can't unfollow yourself!\n");
+            }
         }
     }
 }
