@@ -363,6 +363,36 @@ namespace Server
                         RecordSweet(user_name, requestParams[1]);
                         text_msg_box.AppendText("Message recieved from " + user_name + ".\n");
                     }
+
+                    else if (requestParams[0] == "followedfeed")
+                    {
+                        List<Sweet> feedfollowed_list = sweets.OrderBy(s => s.date).ToList();
+                        string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
+                        string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                        if (!File.Exists(path))
+                        {
+                            using (StreamWriter sw = File.CreateText(path));
+                        }
+                        foreach (string line in File.ReadLines(path))
+                        {
+                            Sweet swt = Sweet.stringToSweet(line);
+                            if (swt.sender != user_name && is_already_follows(user_name, swt.sender))
+                            {
+                                string message = "\n+--- " + swt.sender + " ---+ [" + swt.date + "] ID:" + swt.id + "\n" + swt.content + "\n";
+
+
+                                if (message.Length <= packet_size)
+                                {
+                                    Byte[] buffer = new byte[packet_size];
+                                    buffer = Encoding.Default.GetBytes(message);
+                                    current_client.Send(buffer);
+                                }
+                            }
+
+                        }
+
+                        text_msg_box.AppendText("Followed users message feed send to " + user_name + ".\n");
+                    }
                     
 
                 }

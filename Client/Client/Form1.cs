@@ -37,9 +37,6 @@ namespace client
             {
                 try
                 {
-                    
-                    
-
                     Byte[] buffer = new Byte[packet_size];
 
                     string username = textBox_username.Text;
@@ -56,6 +53,7 @@ namespace client
                         textBox_username.Enabled = false;
                         button_send.Enabled = true;
                         button_loadfeeds.Enabled = true;
+                        button_followedfeed.Enabled = true;
                         button_listusers.Enabled = true;
                         connected = true;
                         logs.AppendText("Connecting to the server!\n");
@@ -76,6 +74,7 @@ namespace client
                             textBox_message.Enabled = true;
                             button_send.Enabled = true;
                             button_loadfeeds.Enabled = true;
+                            button_followedfeed.Enabled = true;
                             button_listusers.Enabled = true;
                             follow_button.Enabled = true;
                             unfollow_button.Enabled = true;
@@ -94,6 +93,7 @@ namespace client
                             textBox_username.Enabled = true;
                             button_send.Enabled = false;
                             button_loadfeeds.Enabled = false;
+                            button_followedfeed.Enabled = false;
                             button_listusers.Enabled = false;
                             connected = false;
 
@@ -135,6 +135,7 @@ namespace client
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                         button_loadfeeds.Enabled = false;
+                        button_followedfeed.Enabled = false;
                         button_listusers.Enabled = false;
                         textBox_username.Enabled = true;
                         follow_button.Enabled = false;
@@ -157,6 +158,7 @@ namespace client
                         textBox_message.Enabled = false;
                         button_send.Enabled = false;
                         button_loadfeeds.Enabled = false;
+                        button_followedfeed.Enabled = false;
                         button_listusers.Enabled = false;
                         textBox_username.Enabled = true;
                         follow_button.Enabled = false;
@@ -224,6 +226,7 @@ namespace client
             textBox_port.Enabled = true;
             textBox_username.Enabled = true;
             button_loadfeeds.Enabled = false;
+            button_followedfeed.Enabled = false;
             button_listusers.Enabled = false;
             follow_button.Enabled = false;
             unfollow_button.Enabled = false;
@@ -277,6 +280,14 @@ namespace client
             {
                 logs.AppendText("You can't unfollow yourself!\n");
             }
+        }
+
+        private void button_followedfeed_Click(object sender, EventArgs e)
+        {
+            string message = "followedfeed***";
+            logs.AppendText("\nLoaded feeds from followed users: \n");
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
         }
     }
 }
