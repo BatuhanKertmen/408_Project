@@ -234,7 +234,6 @@ namespace Server
 
             string line_to_delete = follower_name + "\t" + "follow" + "\t" + target_name;
             converted_user_list.Remove(line_to_delete);
-            text_msg_box.AppendText("Line deleted: " + line_to_delete + "\n");
 
             string[] final_user_list = converted_user_list.ToArray();
             File.WriteAllLines(path, final_user_list, Encoding.UTF8);
@@ -317,18 +316,30 @@ namespace Server
                         if (user_list.Contains(requestParams[1]) && !is_already_follows(user_name, requestParams[1]))
                         {
                             RecordFollower(user_name, requestParams[0], requestParams[1]);
-                            text_msg_box.AppendText(user_name + "is following " + requestParams[1] + ".\n");
+                            text_msg_box.AppendText(user_name + " is following " + requestParams[1] + ".\n");
+
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("You are following " + requestParams[1] + ".\n");
+                            current_client.Send(buffer);
                         }
 
                         else if(is_already_follows(user_name, requestParams[1]))
                         {
                             string msg_to_send = ("User " + user_name + " already following " + requestParams[1] + "!" + "\n");
                             text_msg_box.AppendText(msg_to_send);
+
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("You are already following " + requestParams[1] + "!" + "\n");
+                            current_client.Send(buffer);
                         }
 
                         else
                         {
                             text_msg_box.AppendText("User " + requestParams[1] + " does not exists!" + "\n");
+
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("User " + requestParams[1] + " does not exists!" + "\n");
+                            current_client.Send(buffer);
                         }
                     }
 
@@ -344,12 +355,20 @@ namespace Server
                         {
                             delete_follower(user_name, requestParams[1]);
                             text_msg_box.AppendText(user_name + " unfollowed " + requestParams[1] + ".\n");
+
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("You unfollowed " + requestParams[1] + ".\n");
+                            current_client.Send(buffer);
                         }
 
                         else if (!is_already_follows(user_name, requestParams[1]))
                         {
-                            string msg_to_send = ("User " + user_name + " can't unfollow " + requestParams[1] + " because user already not following the other user!" + "\n");
+                            string msg_to_send = ("User " + user_name + " can't unfollow " + requestParams[1] + " because you are not following " + requestParams[1] + "!\n");
                             text_msg_box.AppendText(msg_to_send);
+
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("You can't unfollow " + requestParams[1] + " because you are not following the " + requestParams[1] + "\n");
+                            current_client.Send(buffer);
                         }
 
                         else

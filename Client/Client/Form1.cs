@@ -146,7 +146,10 @@ namespace client
                     }
 
                     else
+                    {
                         logs.AppendText(incomingMessage);
+                    }
+                        
                 }
                 catch
                 {
@@ -189,8 +192,6 @@ namespace client
                 Byte[] buffer = new byte[packet_size];
                 buffer = Encoding.Default.GetBytes(message);
                 clientSocket.Send(buffer);
-
-                logs.AppendText("\"" + textBox_message.Text + "\" was succesfully sent!\n");
             }
         }
 
@@ -249,8 +250,6 @@ namespace client
                     Byte[] buffer = new byte[packet_size];
                     buffer = Encoding.Default.GetBytes(message);
                     clientSocket.Send(buffer);
-
-                    logs.AppendText("Follow action is succesfully send!\n" );
                 }
             }
 
@@ -271,8 +270,6 @@ namespace client
                     Byte[] buffer = new byte[packet_size];
                     buffer = Encoding.Default.GetBytes(message);
                     clientSocket.Send(buffer);
-
-                    logs.AppendText("Unfollow action is succesfully send!\n");
                 }
             }
 
