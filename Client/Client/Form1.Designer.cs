@@ -47,6 +47,12 @@
             this.follow_button = new System.Windows.Forms.Button();
             this.unfollow_button = new System.Windows.Forms.Button();
             this.button_followedfeed = new System.Windows.Forms.Button();
+            this.block_button = new System.Windows.Forms.Button();
+            this.button_current_followed_users = new System.Windows.Forms.Button();
+            this.button_current_followers = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBox_sweet_id = new System.Windows.Forms.TextBox();
+            this.button_delete_sweet = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -107,7 +113,7 @@
             // textBox_message
             // 
             this.textBox_message.Enabled = false;
-            this.textBox_message.Location = new System.Drawing.Point(101, 302);
+            this.textBox_message.Location = new System.Drawing.Point(101, 309);
             this.textBox_message.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_message.Name = "textBox_message";
             this.textBox_message.Size = new System.Drawing.Size(243, 22);
@@ -116,7 +122,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 305);
+            this.label3.Location = new System.Drawing.Point(24, 309);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(69, 17);
             this.label3.TabIndex = 7;
@@ -125,7 +131,7 @@
             // button_send
             // 
             this.button_send.Enabled = false;
-            this.button_send.Location = new System.Drawing.Point(101, 343);
+            this.button_send.Location = new System.Drawing.Point(101, 335);
             this.button_send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button_send.Name = "button_send";
             this.button_send.Size = new System.Drawing.Size(93, 27);
@@ -149,13 +155,14 @@
             this.textBox_username.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox_username.Name = "textBox_username";
             this.textBox_username.Size = new System.Drawing.Size(173, 22);
-            this.textBox_username.TabIndex = 10;
+            this.textBox_username.TabIndex = 4;
+            this.textBox_username.TextChanged += new System.EventHandler(this.textBox_username_TextChanged);
             // 
             // button_loadfeeds
             // 
             this.button_loadfeeds.Enabled = false;
             this.button_loadfeeds.Location = new System.Drawing.Point(383, 389);
-            this.button_loadfeeds.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_loadfeeds.Margin = new System.Windows.Forms.Padding(4);
             this.button_loadfeeds.Name = "button_loadfeeds";
             this.button_loadfeeds.Size = new System.Drawing.Size(108, 28);
             this.button_loadfeeds.TabIndex = 11;
@@ -179,7 +186,7 @@
             // 
             this.button_listusers.Enabled = false;
             this.button_listusers.Location = new System.Drawing.Point(499, 389);
-            this.button_listusers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_listusers.Margin = new System.Windows.Forms.Padding(4);
             this.button_listusers.Name = "button_listusers";
             this.button_listusers.Size = new System.Drawing.Size(108, 28);
             this.button_listusers.TabIndex = 13;
@@ -200,8 +207,8 @@
             // follower_text_box
             // 
             this.follower_text_box.Enabled = false;
-            this.follower_text_box.Location = new System.Drawing.Point(104, 219);
-            this.follower_text_box.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.follower_text_box.Location = new System.Drawing.Point(101, 219);
+            this.follower_text_box.Margin = new System.Windows.Forms.Padding(4);
             this.follower_text_box.Name = "follower_text_box";
             this.follower_text_box.Size = new System.Drawing.Size(171, 22);
             this.follower_text_box.TabIndex = 17;
@@ -209,8 +216,8 @@
             // follow_button
             // 
             this.follow_button.Enabled = false;
-            this.follow_button.Location = new System.Drawing.Point(101, 251);
-            this.follow_button.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.follow_button.Location = new System.Drawing.Point(48, 251);
+            this.follow_button.Margin = new System.Windows.Forms.Padding(4);
             this.follow_button.Name = "follow_button";
             this.follow_button.Size = new System.Drawing.Size(93, 28);
             this.follow_button.TabIndex = 18;
@@ -221,8 +228,8 @@
             // unfollow_button
             // 
             this.unfollow_button.Enabled = false;
-            this.unfollow_button.Location = new System.Drawing.Point(203, 251);
-            this.unfollow_button.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.unfollow_button.Location = new System.Drawing.Point(149, 251);
+            this.unfollow_button.Margin = new System.Windows.Forms.Padding(4);
             this.unfollow_button.Name = "unfollow_button";
             this.unfollow_button.Size = new System.Drawing.Size(92, 28);
             this.unfollow_button.TabIndex = 19;
@@ -241,11 +248,74 @@
             this.button_followedfeed.UseVisualStyleBackColor = true;
             this.button_followedfeed.Click += new System.EventHandler(this.button_followedfeed_Click);
             // 
+            // block_button
+            // 
+            this.block_button.Enabled = false;
+            this.block_button.Location = new System.Drawing.Point(251, 251);
+            this.block_button.Name = "block_button";
+            this.block_button.Size = new System.Drawing.Size(93, 28);
+            this.block_button.TabIndex = 21;
+            this.block_button.Text = "Block";
+            this.block_button.UseVisualStyleBackColor = true;
+            this.block_button.Click += new System.EventHandler(this.block_button_Click);
+            // 
+            // button_current_followed_users
+            // 
+            this.button_current_followed_users.Location = new System.Drawing.Point(383, 424);
+            this.button_current_followed_users.Name = "button_current_followed_users";
+            this.button_current_followed_users.Size = new System.Drawing.Size(209, 28);
+            this.button_current_followed_users.TabIndex = 22;
+            this.button_current_followed_users.Text = "Current Followed Users";
+            this.button_current_followed_users.UseVisualStyleBackColor = true;
+            this.button_current_followed_users.Click += new System.EventHandler(this.button_current_followed_users_Click);
+            // 
+            // button_current_followers
+            // 
+            this.button_current_followers.Location = new System.Drawing.Point(598, 424);
+            this.button_current_followers.Name = "button_current_followers";
+            this.button_current_followers.Size = new System.Drawing.Size(189, 28);
+            this.button_current_followers.TabIndex = 23;
+            this.button_current_followers.Text = "Current Followers";
+            this.button_current_followers.UseVisualStyleBackColor = true;
+            this.button_current_followers.Click += new System.EventHandler(this.button_current_followers_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(24, 379);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 17);
+            this.label5.TabIndex = 24;
+            this.label5.Text = "Sweet id:";
+            // 
+            // textBox_sweet_id
+            // 
+            this.textBox_sweet_id.Location = new System.Drawing.Point(101, 379);
+            this.textBox_sweet_id.Name = "textBox_sweet_id";
+            this.textBox_sweet_id.Size = new System.Drawing.Size(243, 22);
+            this.textBox_sweet_id.TabIndex = 25;
+            // 
+            // button_delete_sweet
+            // 
+            this.button_delete_sweet.Location = new System.Drawing.Point(101, 407);
+            this.button_delete_sweet.Name = "button_delete_sweet";
+            this.button_delete_sweet.Size = new System.Drawing.Size(104, 30);
+            this.button_delete_sweet.TabIndex = 26;
+            this.button_delete_sweet.Text = "Delete Sweet";
+            this.button_delete_sweet.UseVisualStyleBackColor = true;
+            this.button_delete_sweet.Click += new System.EventHandler(this.button_delete_sweet_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(885, 466);
+            this.Controls.Add(this.button_delete_sweet);
+            this.Controls.Add(this.textBox_sweet_id);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.button_current_followers);
+            this.Controls.Add(this.button_current_followed_users);
+            this.Controls.Add(this.block_button);
             this.Controls.Add(this.button_followedfeed);
             this.Controls.Add(this.unfollow_button);
             this.Controls.Add(this.follow_button);
@@ -294,6 +364,12 @@
         private System.Windows.Forms.Button follow_button;
         private System.Windows.Forms.Button unfollow_button;
         private System.Windows.Forms.Button button_followedfeed;
+        private System.Windows.Forms.Button block_button;
+        private System.Windows.Forms.Button button_current_followed_users;
+        private System.Windows.Forms.Button button_current_followers;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBox_sweet_id;
+        private System.Windows.Forms.Button button_delete_sweet;
     }
 }
 

@@ -10,7 +10,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms; 
+using System.Windows.Forms;
+
+
 
 namespace Server
 {
@@ -19,6 +21,7 @@ namespace Server
         public string sender;
         public string content;
         public DateTime date;
+        
 
         public Sweet(string sender_info, string content_info, string given_date, string given_id)
         {
@@ -72,6 +75,28 @@ namespace Server
 
     }
 
+    public struct Block
+    {
+        public string sender;
+        public string target_user;
+
+        public Block(string sender_info, string target_user_info)
+        {
+            sender = sender_info;
+            target_user = target_user_info;
+        }
+
+        public static Block stringToBlock(string msg)
+        {
+            string[] blockerList = msg.Split('\t');
+            string sender = blockerList[0];
+            string target_user = blockerList[1];
+
+            return new Block(sender, target_user);
+        }
+
+    }
+
     public partial class Form1 : Form
     {
         Socket server_socket;
@@ -79,7 +104,9 @@ namespace Server
         List<string> connected_list = new List<string>();
         List<Sweet> sweets = new List<Sweet>();
         List<Follow> follows = new List<Follow>();
+        List<Block> blocks = new List<Block>();
         int packet_size = 512;
+        
         bool binded = false;
 
         bool terminating = false;
@@ -225,6 +252,21 @@ namespace Server
             return false;
         }
 
+        private bool is_already_blocks(string blocker_name, string target_name)
+        {
+            string path = Directory.GetCurrentDirectory() + "\\blocks.txt";
+            foreach(string line in File.ReadLines(path))
+            {
+                Block blk = Block.stringToBlock(line);
+
+                if (blk.sender == blocker_name && blk.target_user == target_name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void delete_follower(string follower_name, string target_name)
         {
             string path = Directory.GetCurrentDirectory() + "\\follows.txt";
@@ -239,6 +281,22 @@ namespace Server
             File.WriteAllLines(path, final_user_list, Encoding.UTF8);
 
         }
+
+        private void delete_sweet(Sweet sweet)
+        {
+            
+            string path2 = Directory.GetCurrentDirectory() + "\\sweet.txt";
+            string[] sweets = System.IO.File.ReadAllLines(path2);
+            List<string> converted_sweet_list = new List<string>(sweets);
+            
+            string line_to_delete = sweet.sender + "\t" + sweet.date + "\t" + sweet.id + "\t" + sweet.content;
+            converted_sweet_list.Remove(line_to_delete);
+
+            
+            string[] final_sweet_list = converted_sweet_list.ToArray();
+            File.WriteAllLines(path2, final_sweet_list, Encoding.UTF8);
+        }
+
 
         private void ReceiveMsg(Socket current_client, string user_name)
          {
@@ -259,11 +317,16 @@ namespace Server
                         {
                             using (StreamWriter sw = File.CreateText(path));
                         }
+                        string path2 = Directory.GetCurrentDirectory() + "\\blocks.txt";
+                        if (!File.Exists(path2))
+                            File.AppendAllText(path2, "");
+
                         foreach (string line in File.ReadLines(path))
                         {
                             Sweet swt = Sweet.stringToSweet(line);
-                            if(swt.sender != user_name)
+                            if(swt.sender != user_name && !is_already_blocks(swt.sender, user_name))
                             {
+                                text_msg_box.AppendText(swt.sender + " " + user_name);
                                 string message = "\n+--- " + swt.sender + " ---+ [" + swt.date + "] ID:" + swt.id + "\n" + swt.content + "\n";
 
 
@@ -311,10 +374,16 @@ namespace Server
                         if (!File.Exists(path))
                             File.AppendAllText(path, "");
 
+                        string path2 = Directory.GetCurrentDirectory() + "\\blocks.txt";
+                        if (!File.Exists(path2))
+                            File.AppendAllText(path2, "");
+
                         string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
 
-                        if (user_list.Contains(requestParams[1]) && !is_already_follows(user_name, requestParams[1]))
+                       
+                        if (user_list.Contains(requestParams[1]) && !is_already_follows(user_name, requestParams[1]) && !is_already_blocks(requestParams[1], user_name))
                         {
+                            
                             RecordFollower(user_name, requestParams[0], requestParams[1]);
                             text_msg_box.AppendText(user_name + " is following " + requestParams[1] + ".\n");
 
@@ -332,7 +401,17 @@ namespace Server
                             buffer = Encoding.Default.GetBytes("You are already following " + requestParams[1] + "!" + "\n");
                             current_client.Send(buffer);
                         }
+                        
+                        else if (is_already_blocks(requestParams[1], user_name))
+                        {
+                            string msg_to_send = ("User " + requestParams[1] + " is blocking " + user_name + " so follow was unsuccesful!" + "\n");
+                            text_msg_box.AppendText(msg_to_send);
 
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("You are blocked by " + requestParams[1] + "!" + "\n");
+                            current_client.Send(buffer);
+                        }
+                        
                         else
                         {
                             text_msg_box.AppendText("User " + requestParams[1] + " does not exists!" + "\n");
@@ -380,7 +459,7 @@ namespace Server
                     else if (requestParams[0] == "sendmessage")
                     {
                         RecordSweet(user_name, requestParams[1]);
-                        text_msg_box.AppendText("Message recieved from " + user_name + ".\n");
+                        text_msg_box.AppendText("Message recieved from " + user_name + " ---> " + requestParams[1] + ".\n");
                     }
 
                     else if (requestParams[0] == "followedfeed")
@@ -412,7 +491,155 @@ namespace Server
 
                         text_msg_box.AppendText("Followed users message feed send to " + user_name + ".\n");
                     }
-                    
+                    else if(requestParams[0] == "blockuser")
+                    {
+                        string path = Directory.GetCurrentDirectory() + "\\blocks.txt";
+                        if (!File.Exists(path))
+                            File.AppendAllText(path, "");
+
+                        string path2 = Directory.GetCurrentDirectory() + "\\follows.txt";
+                        if (!File.Exists(path2))
+                            File.AppendAllText(path2, "");
+
+                        string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
+
+                        if (user_list.Contains(requestParams[1]) && !is_already_blocks(user_name, requestParams[1]))
+                        {
+                            RecordBlocker(user_name, requestParams[1]);
+                            text_msg_box.AppendText(user_name + " is blocking " + requestParams[1] + ".\n");
+
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("You are blocking " + requestParams[1] + ".\n");
+                            current_client.Send(buffer);
+
+                            if (is_already_follows(requestParams[1], user_name))
+                            {
+                                delete_follower(requestParams[1], user_name);
+                                text_msg_box.AppendText(requestParams[1] + " is dropped from following " + user_name + ".\n");
+
+                                Byte[] buffer2 = new Byte[64];
+                                buffer2 = Encoding.Default.GetBytes(requestParams[1] + " is dropped from following you" + ".\n");
+                                current_client.Send(buffer2);
+                            }
+                        }
+                        else if (is_already_blocks(user_name, requestParams[1]))
+                        {
+                            string msg_to_send = ("User " + user_name + " can't block " + requestParams[1] + " because " + user_name + " is already blocking " + requestParams[1] + "!\n");
+                            text_msg_box.AppendText(msg_to_send);
+
+                            Byte[] buffer = new Byte[64];
+                            buffer = Encoding.Default.GetBytes("You can't block " + requestParams[1] + " because you are already blocking " + requestParams[1] + "\n");
+                            current_client.Send(buffer);
+                        }
+                        else
+                        {
+                            text_msg_box.AppendText("Something unexpected happened in the blocking action! \n");
+                        }
+                    }
+                    else if (requestParams[0] == "currentfollowedusers")
+                    {
+                        string path = Directory.GetCurrentDirectory() + "\\follows.txt";
+                        if (!File.Exists(path))
+                            File.AppendAllText(path, "");
+
+                        string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
+
+                        foreach (string user in user_list)
+                        {
+                            if (user != user_name && is_already_follows(user_name, user))
+                            {
+                                Thread.Sleep(2);
+                                string message = "+--- " + user + " ---+\n";
+
+                                if (message.Length <= packet_size)
+                                {
+                                    Byte[] buffer = new byte[packet_size];
+                                    buffer = Encoding.Default.GetBytes(message);
+                                    current_client.Send(buffer);
+                                }
+                            }
+
+                        }
+
+                        text_msg_box.AppendText("Followed user list send to " + user_name + ".\n");
+                    }
+                    else if (requestParams[0] == "currentfollowers")
+                    {
+                        string path = Directory.GetCurrentDirectory() + "\\follows.txt";
+                        if (!File.Exists(path))
+                            File.AppendAllText(path, "");
+
+                        string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
+
+                        foreach (string user in user_list)
+                        {
+                            if (user != user_name && is_already_follows(user, user_name))
+                            {
+                                Thread.Sleep(2);
+                                string message = "+--- " + user + " ---+\n";
+
+                                if (message.Length <= packet_size)
+                                {
+                                    Byte[] buffer = new byte[packet_size];
+                                    buffer = Encoding.Default.GetBytes(message);
+                                    current_client.Send(buffer);
+                                }
+                            }
+
+                        }
+
+                        text_msg_box.AppendText("Followed user list send to " + user_name + ".\n");
+                    }
+                    else if(requestParams[0] == "deletesweet")
+                    {
+                        string sweet_id = requestParams[1];
+
+                        List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
+
+                        string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                        if (!File.Exists(path))
+                        {
+                            using (StreamWriter sw = File.CreateText(path));
+                        }
+
+                        bool isExistsId = false;
+                        foreach (string line in File.ReadLines(path))
+                        {
+                            Sweet swt = Sweet.stringToSweet(line);
+                            if (swt.sender == user_name && swt.id == sweet_id)
+                            {
+                                isExistsId = true;
+
+                                delete_sweet(swt);
+
+                                Byte[] buffer = new byte[packet_size];
+                                buffer = Encoding.Default.GetBytes("Your sweet with id " + sweet_id + "is deleted.\n");
+                                current_client.Send(buffer);
+                                
+                            }
+                            else if (swt.sender != user_name && swt.id == sweet_id)
+                            {
+                                text_msg_box.AppendText(user_name + " does not own sweet with id" + sweet_id + ".\n");
+                                
+                                Byte[] buffer = new byte[packet_size];
+                                buffer = Encoding.Default.GetBytes("You do not own sweet with id" + sweet_id + ".\n");
+                                current_client.Send(buffer);
+                                break;
+                            }
+
+                        }
+                        if (isExistsId == false)
+                        {
+                            text_msg_box.AppendText("Sweet with id" + sweet_id + " does not exist.\n");
+
+                            Byte[] buffer = new byte[packet_size];
+                            buffer = Encoding.Default.GetBytes("Sweet with id" + sweet_id + " does not exist.\n");
+                            current_client.Send(buffer);
+                        }
+                    }
+
+
+
 
                 }
                  catch 
@@ -466,6 +693,28 @@ namespace Server
             {
                 string path = Directory.GetCurrentDirectory() + "\\follows.txt";
                 File.AppendAllText(path, action + "\n");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
+        }
+
+        private void RecordBlocker(string user_name, string target_name)
+        {
+            string path = Directory.GetCurrentDirectory() + "\\blocks.txt";
+            if (!File.Exists(path))
+                File.AppendAllText(path, "");
+
+            Block newBlock = new Block(user_name, target_name);
+            blocks.Add(newBlock);
+
+            string action = newBlock.sender + "\t" + newBlock.target_user;
+
+            try
+            {
+                string path2 = Directory.GetCurrentDirectory() + "\\blocks.txt";
+                File.AppendAllText(path2, action + "\n");
             }
             catch (Exception e)
             {

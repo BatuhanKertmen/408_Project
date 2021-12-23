@@ -55,6 +55,7 @@ namespace client
                         button_loadfeeds.Enabled = true;
                         button_followedfeed.Enabled = true;
                         button_listusers.Enabled = true;
+                        block_button.Enabled = true;
                         connected = true;
                         logs.AppendText("Connecting to the server!\n");
 
@@ -81,6 +82,7 @@ namespace client
                             follower_text_box.Enabled = true;
 
                             connected = true;
+                            terminating = false;
 
                             Thread receiveThread = new Thread(Receive);
                             receiveThread.Start();
@@ -120,8 +122,7 @@ namespace client
             while(connected)
             {
                 try
-                {                 
-
+                {
                     Byte[] buffer = new Byte[packet_size];
                     clientSocket.Receive(buffer);
 
@@ -129,7 +130,9 @@ namespace client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
                     if (incomingMessage == "") {
+                        
                         logs.AppendText("The server has disconnected\n");
+                        logs.AppendText("ilki");
                         button_connect.Enabled = true;
                         button_disconnect.Enabled = false;
                         textBox_message.Enabled = false;
@@ -141,10 +144,11 @@ namespace client
                         follow_button.Enabled = false;
                         unfollow_button.Enabled = false;
                         follower_text_box.Enabled = false;
+                        block_button.Enabled = false;
                         clientSocket.Close();
                         connected = false;
+                        
                     }
-
                     else
                     {
                         logs.AppendText(incomingMessage);
@@ -167,6 +171,7 @@ namespace client
                         follow_button.Enabled = false;
                         unfollow_button.Enabled = false;
                         follower_text_box.Enabled = false;
+                        block_button.Enabled = false;
                     }
 
                     clientSocket.Close();
@@ -189,6 +194,7 @@ namespace client
 
             if (message != "sendmessage***" && message.Length <= packet_size)
             {
+                logs.AppendText("Message sent to the server: " + message.Substring(14) + "\n");
                 Byte[] buffer = new byte[packet_size];
                 buffer = Encoding.Default.GetBytes(message);
                 clientSocket.Send(buffer);
@@ -232,6 +238,7 @@ namespace client
             follow_button.Enabled = false;
             unfollow_button.Enabled = false;
             follower_text_box.Enabled = false;
+            block_button.Enabled = false;
 
             terminating = true;
             clientSocket.Close();
@@ -284,6 +291,51 @@ namespace client
             string message = "followedfeed***";
             logs.AppendText("\nLoaded feeds from followed users: \n");
             Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+        }
+
+        private void textBox_username_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void block_button_Click(object sender, EventArgs e)
+        {
+            
+            string blocked_user = follower_text_box.Text;
+            if (blocked_user != textBox_username.Text)
+            {
+                string message = "blockuser***";
+                Byte[] buffer = Encoding.Default.GetBytes(message + blocked_user);
+                clientSocket.Send(buffer);
+            }
+            else
+            {
+                textBox_message.AppendText("You can not follow yourself!\n");
+            }
+        }
+
+        private void button_current_followed_users_Click(object sender, EventArgs e)
+        {
+            string message = "currentfollowedusers***";
+            logs.AppendText("\nCurrent followed users list: \n");
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+        }
+
+        private void button_current_followers_Click(object sender, EventArgs e)
+        {
+            string message = "currentfollowers***";
+            logs.AppendText("\nCurrent followers list: \n");
+            Byte[] buffer = Encoding.Default.GetBytes(message);
+            clientSocket.Send(buffer);
+        }
+
+        private void button_delete_sweet_Click(object sender, EventArgs e)
+        {
+            string message = "deletesweet***";
+            string sweet_id = textBox_sweet_id.Text;
+            Byte[] buffer = Encoding.Default.GetBytes(message + sweet_id);
             clientSocket.Send(buffer);
         }
     }
