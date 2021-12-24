@@ -284,7 +284,6 @@ namespace Server
 
         private void delete_sweet(Sweet sweet)
         {
-            
             string path2 = Directory.GetCurrentDirectory() + "\\sweet.txt";
             string[] sweets = System.IO.File.ReadAllLines(path2);
             List<string> converted_sweet_list = new List<string>(sweets);
@@ -292,9 +291,17 @@ namespace Server
             string line_to_delete = sweet.sender + "\t" + sweet.date + "\t" + sweet.id + "\t" + sweet.content;
             converted_sweet_list.Remove(line_to_delete);
 
-            
             string[] final_sweet_list = converted_sweet_list.ToArray();
-            File.WriteAllLines(path2, final_sweet_list, Encoding.UTF8);
+
+            try
+            {
+                System.IO.File.WriteAllLines(path2, final_sweet_list, Encoding.UTF8);
+            }
+            catch (Exception e)
+            {
+                text_msg_box.AppendText(e.Message);
+            }
+            
         }
 
 
@@ -311,12 +318,14 @@ namespace Server
                     if(requestParams[0] == "loadfeeds")
                     {
                         List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
-                        
+
+
                         string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
                         if (!File.Exists(path))
                         {
-                            using (StreamWriter sw = File.CreateText(path));
+                            using (StreamWriter sw = File.CreateText(path)) ;
                         }
+
                         string path2 = Directory.GetCurrentDirectory() + "\\blocks.txt";
                         if (!File.Exists(path2))
                             File.AppendAllText(path2, "");
@@ -326,7 +335,6 @@ namespace Server
                             Sweet swt = Sweet.stringToSweet(line);
                             if(swt.sender != user_name && !is_already_blocks(swt.sender, user_name))
                             {
-                                text_msg_box.AppendText(swt.sender + " " + user_name);
                                 string message = "\n+--- " + swt.sender + " ---+ [" + swt.date + "] ID:" + swt.id + "\n" + swt.content + "\n";
 
 
@@ -468,9 +476,7 @@ namespace Server
                         string[] user_list = System.IO.File.ReadAllLines(@"..\\..\\user-db.txt");
                         string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
                         if (!File.Exists(path))
-                        {
-                            using (StreamWriter sw = File.CreateText(path));
-                        }
+                            File.AppendAllText(path, "");
                         foreach (string line in File.ReadLines(path))
                         {
                             Sweet swt = Sweet.stringToSweet(line);
@@ -594,16 +600,15 @@ namespace Server
                     {
                         string sweet_id = requestParams[1];
 
-                        List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
-
                         string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
                         if (!File.Exists(path))
-                        {
-                            using (StreamWriter sw = File.CreateText(path));
-                        }
+                            File.AppendAllText(path, "");
+
+                        List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
 
                         bool isExistsId = false;
-                        foreach (string line in File.ReadLines(path))
+                        string[] allSweets = File.ReadAllLines(path);
+                        foreach (string line in allSweets)
                         {
                             Sweet swt = Sweet.stringToSweet(line);
                             if (swt.sender == user_name && swt.id == sweet_id)
@@ -613,7 +618,7 @@ namespace Server
                                 delete_sweet(swt);
 
                                 Byte[] buffer = new byte[packet_size];
-                                buffer = Encoding.Default.GetBytes("Your sweet with id " + sweet_id + "is deleted.\n");
+                                buffer = Encoding.Default.GetBytes("Your sweet with id " + sweet_id + " is deleted.\n");
                                 current_client.Send(buffer);
                                 
                             }
@@ -637,9 +642,37 @@ namespace Server
                             current_client.Send(buffer);
                         }
                     }
+                    else if (requestParams[0] == "selfsweets")
+                    {
+                        List<Sweet> feed_list = sweets.OrderBy(s => s.date).ToList();
 
+                        string path = Directory.GetCurrentDirectory() + "\\sweet.txt";
+                        if (!File.Exists(path))
+                            File.AppendAllText(path, "");
 
+                        Byte[] buffer = new byte[packet_size];
+                        buffer = Encoding.Default.GetBytes("\nYour sweets:\n");
+                        current_client.Send(buffer);
 
+                        foreach (string line in File.ReadLines(path))
+                        {
+                            Sweet swt = Sweet.stringToSweet(line);
+                            if (swt.sender == user_name)
+                            {
+                                string message = "\n+--- " + swt.sender + " ---+ [" + swt.date + "] ID:" + swt.id + "\n" + swt.content + "\n";
+
+                                if (message.Length <= packet_size)
+                                {
+                                    Byte[] buffer2 = new byte[packet_size];
+                                    buffer2 = Encoding.Default.GetBytes(message);
+                                    current_client.Send(buffer2);
+                                }
+                            }
+
+                        }
+
+                        text_msg_box.AppendText(user_name + "'s feed sent to " + user_name + ".\n");
+                    }
 
                 }
                  catch 

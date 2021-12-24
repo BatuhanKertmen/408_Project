@@ -53,6 +53,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.textBox_sweet_id = new System.Windows.Forms.TextBox();
             this.button_delete_sweet = new System.Windows.Forms.Button();
+            this.button_see_sweets = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -261,6 +262,7 @@
             // 
             // button_current_followed_users
             // 
+            this.button_current_followed_users.Enabled = false;
             this.button_current_followed_users.Location = new System.Drawing.Point(383, 424);
             this.button_current_followed_users.Name = "button_current_followed_users";
             this.button_current_followed_users.Size = new System.Drawing.Size(209, 28);
@@ -271,6 +273,7 @@
             // 
             // button_current_followers
             // 
+            this.button_current_followers.Enabled = false;
             this.button_current_followers.Location = new System.Drawing.Point(598, 424);
             this.button_current_followers.Name = "button_current_followers";
             this.button_current_followers.Size = new System.Drawing.Size(189, 28);
@@ -290,6 +293,7 @@
             // 
             // textBox_sweet_id
             // 
+            this.textBox_sweet_id.Enabled = false;
             this.textBox_sweet_id.Location = new System.Drawing.Point(101, 379);
             this.textBox_sweet_id.Name = "textBox_sweet_id";
             this.textBox_sweet_id.Size = new System.Drawing.Size(243, 22);
@@ -297,6 +301,7 @@
             // 
             // button_delete_sweet
             // 
+            this.button_delete_sweet.Enabled = false;
             this.button_delete_sweet.Location = new System.Drawing.Point(101, 407);
             this.button_delete_sweet.Name = "button_delete_sweet";
             this.button_delete_sweet.Size = new System.Drawing.Size(104, 30);
@@ -305,11 +310,23 @@
             this.button_delete_sweet.UseVisualStyleBackColor = true;
             this.button_delete_sweet.Click += new System.EventHandler(this.button_delete_sweet_Click);
             // 
+            // button_see_sweets
+            // 
+            this.button_see_sweets.Enabled = false;
+            this.button_see_sweets.Location = new System.Drawing.Point(211, 407);
+            this.button_see_sweets.Name = "button_see_sweets";
+            this.button_see_sweets.Size = new System.Drawing.Size(104, 30);
+            this.button_see_sweets.TabIndex = 27;
+            this.button_see_sweets.Text = "See Sweets";
+            this.button_see_sweets.UseVisualStyleBackColor = true;
+            this.button_see_sweets.Click += new System.EventHandler(this.button_see_sweets_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(885, 466);
+            this.Controls.Add(this.button_see_sweets);
             this.Controls.Add(this.button_delete_sweet);
             this.Controls.Add(this.textBox_sweet_id);
             this.Controls.Add(this.label5);
@@ -370,6 +387,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBox_sweet_id;
         private System.Windows.Forms.Button button_delete_sweet;
+        private System.Windows.Forms.Button button_see_sweets;
     }
 }
 

@@ -80,6 +80,11 @@ namespace client
                             follow_button.Enabled = true;
                             unfollow_button.Enabled = true;
                             follower_text_box.Enabled = true;
+                            button_see_sweets.Enabled = true;
+                            button_current_followed_users.Enabled = true;
+                            button_current_followers.Enabled = true;
+                            textBox_sweet_id.Enabled = true;
+                            button_delete_sweet.Enabled = true;
 
                             connected = true;
                             terminating = false;
@@ -98,6 +103,11 @@ namespace client
                             button_followedfeed.Enabled = false;
                             button_listusers.Enabled = false;
                             connected = false;
+                            button_see_sweets.Enabled = false;
+                            button_current_followed_users.Enabled = false;
+                            button_current_followers.Enabled = false;
+                            textBox_sweet_id.Enabled = false;
+                            button_delete_sweet.Enabled = false;
 
                             logs.AppendText("Username Check Failed!\n");
 
@@ -147,7 +157,12 @@ namespace client
                         block_button.Enabled = false;
                         clientSocket.Close();
                         connected = false;
-                        
+                        button_see_sweets.Enabled = false;
+                        button_current_followed_users.Enabled = false;
+                        button_current_followers.Enabled = false;
+                        textBox_sweet_id.Enabled = false;
+                        button_delete_sweet.Enabled = false;
+
                     }
                     else
                     {
@@ -172,6 +187,11 @@ namespace client
                         unfollow_button.Enabled = false;
                         follower_text_box.Enabled = false;
                         block_button.Enabled = false;
+                        button_see_sweets.Enabled = false;
+                        button_current_followed_users.Enabled = false;
+                        button_current_followers.Enabled = false;
+                        textBox_sweet_id.Enabled = false;
+                        button_delete_sweet.Enabled = false;
                     }
 
                     clientSocket.Close();
@@ -239,6 +259,11 @@ namespace client
             unfollow_button.Enabled = false;
             follower_text_box.Enabled = false;
             block_button.Enabled = false;
+            button_see_sweets.Enabled = false;
+            button_current_followed_users.Enabled = false;
+            button_current_followers.Enabled = false;
+            textBox_sweet_id.Enabled = false;
+            button_delete_sweet.Enabled = false;
 
             terminating = true;
             clientSocket.Close();
@@ -336,6 +361,13 @@ namespace client
             string message = "deletesweet***";
             string sweet_id = textBox_sweet_id.Text;
             Byte[] buffer = Encoding.Default.GetBytes(message + sweet_id);
+            clientSocket.Send(buffer);
+        }
+
+        private void button_see_sweets_Click(object sender, EventArgs e)
+        {
+            string message = "selfsweets***";
+            Byte[] buffer = Encoding.Default.GetBytes(message);
             clientSocket.Send(buffer);
         }
     }
