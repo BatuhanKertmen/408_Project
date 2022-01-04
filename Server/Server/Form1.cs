@@ -614,9 +614,10 @@ namespace Server
                             if (swt.sender == user_name && swt.id == sweet_id)
                             {
                                 isExistsId = true;
-
+                               
                                 delete_sweet(swt);
-
+                               
+                                text_msg_box.AppendText("Sweet with id " + sweet_id + " is deleted.\n");
                                 Byte[] buffer = new byte[packet_size];
                                 buffer = Encoding.Default.GetBytes("Your sweet with id " + sweet_id + " is deleted.\n");
                                 current_client.Send(buffer);
@@ -624,10 +625,12 @@ namespace Server
                             }
                             else if (swt.sender != user_name && swt.id == sweet_id)
                             {
-                                text_msg_box.AppendText(user_name + " does not own sweet with id" + sweet_id + ".\n");
+                                isExistsId = true;
+
+                                text_msg_box.AppendText(user_name + " does not own sweet with id " + sweet_id + ".\n");
                                 
                                 Byte[] buffer = new byte[packet_size];
-                                buffer = Encoding.Default.GetBytes("You do not own sweet with id" + sweet_id + ".\n");
+                                buffer = Encoding.Default.GetBytes("You do not own sweet with id " + sweet_id + ".\n");
                                 current_client.Send(buffer);
                                 break;
                             }
